@@ -79,7 +79,12 @@
         <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
         <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
     </div>
-
+<!-- Botón discreto para reiniciar -->
+    <div style="margin-top: 40px;">
+        <button onclick="reiniciarPasaporte()" style="background: none; border: none; color: #d1d1d1; font-size: 0.8rem; cursor: pointer; text-decoration: underline;">
+            Reiniciar pasaporte
+        </button>
+    </div>
     <script>
         // Arreglo actualizado con los 11 stands (en minúsculas para las URLs)
         const empresas = [
@@ -105,6 +110,13 @@
                 }
             }
         });
+        // Función para resetear el pasaporte
+        function reiniciarPasaporte() {
+            if(confirm("¿Seguro que quieres borrar todos los sellos?")) {
+                localStorage.clear(); // Borra los datos del navegador
+                window.location.href = window.location.pathname; // Limpia la URL y recarga
+            }
+        }
     </script>
 </body>
 </html>
