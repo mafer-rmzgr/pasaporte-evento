@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasaporte del Evento</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #333; font-size: 1.8rem; }
+        p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .grid-pasaporte {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .sello {
+            background-color: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px; 
+            transition: all 0.3s ease;
+        }
+
+        .sello img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; 
+            transition: all 0.4s ease;
+        }
+
+        .bloqueado {
+            border: 2px dashed #d1d1d1;
+            background-color: #fafafa;
+        }
+        .bloqueado img {
+            filter: grayscale(100%) opacity(20%);
+        }
+
+        .desbloqueado {
+            border: 2px solid #4CAF50;
+            background-color: #ffffff;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
+        }
+        .desbloqueado img {
+            filter: grayscale(0%) opacity(100%);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pasaporte Interactivo</h1>
+    <p>Escanea el QR en cada stand para activar su logo.</p>
+
+    <div class="grid-pasaporte">
+        <!-- Nombres de archivo ajustados exactamente a tu carpeta -->
+        <div id="stand-abb" class="sello bloqueado"><img src="img/abb.png" alt="ABB"></div>
+        <div id="stand-aspentech" class="sello bloqueado"><img src="img/aspentech.png" alt="AspenTech"></div>
+        <div id="stand-dow" class="sello bloqueado"><img src="img/dow.png" alt="Dow"></div>
+        <div id="stand-emerson" class="sello bloqueado"><img src="img/emerson.png" alt="Emerson"></div>
+        <div id="stand-engie" class="sello bloqueado"><img src="img/engie.png" alt="Engie"></div>
+        <div id="stand-goodway" class="sello bloqueado"><img src="img/Goodway.png" alt="Goodway"></div>
+        <div id="stand-halliburton" class="sello bloqueado"><img src="img/Halliburton.png" alt="Halliburton"></div>
+        <div id="stand-linde" class="sello bloqueado"><img src="img/linde.png" alt="Linde"></div>
+        <div id="stand-pemex" class="sello bloqueado"><img src="img/pemex.png" alt="Pemex"></div>
+        <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
+        <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
+    </div>
+
+    <script>
+        // Arreglo actualizado con los 11 stands (en minúsculas para las URLs)
+        const empresas = [
+            'abb', 'aspentech', 'dow', 'emerson', 'engie', 
+            'goodway', 'halliburton', 'linde', 'pemex', 'woodside', 'orbia'
+        ];
+
+        const parametrosURL = new URLSearchParams(window.location.search);
+        const selloEscaneado = parametrosURL.get('sello');
+
+        if (selloEscaneado && empresas.includes(selloEscaneado)) {
+            localStorage.setItem(selloEscaneado, 'visitado');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        empresas.forEach(empresa => {
+            const estadoSello = localStorage.getItem(empresa);
+            if (estadoSello === 'visitado') {
+                const elemento = document.getElementById(`stand-${empresa}`);
+                if (elemento) {
+                    elemento.classList.remove('bloqueado');
+                    elemento.classList.add('desbloqueado');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
