@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasaporte del Evento</title>
+    <!-- Librería para la celebración digital con confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -58,6 +60,12 @@
         .desbloqueado img {
             filter: grayscale(0%) opacity(100%);
         }
+
+        /* Animación para el cartel de premio */
+        @keyframes popIn { 
+            0% { transform: scale(0.5); opacity: 0; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
     </style>
 </head>
 <body>
@@ -66,7 +74,7 @@
     <p>Escanea el QR en cada stand para activar su logo.</p>
 
     <div class="grid-pasaporte">
-        <!-- Nombres de archivo ajustados exactamente a tu carpeta -->
+        <!-- Imágenes y stands -->
         <div id="stand-abb" class="sello bloqueado"><img src="img/abb.png" alt="ABB"></div>
         <div id="stand-aspentech" class="sello bloqueado"><img src="img/aspentech.png" alt="AspenTech"></div>
         <div id="stand-dow" class="sello bloqueado"><img src="img/dow.png" alt="Dow"></div>
@@ -79,14 +87,21 @@
         <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
         <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
     </div>
-<!-- Botón discreto para reiniciar -->
+
+    <!-- Mensaje de Pasa por tu premio, oculto por defecto -->
+    <div id="mensaje-premio" style="display: none; margin-top: 30px; padding: 20px; background-color: #4CAF50; color: white; border-radius: 12px; animation: popIn 0.5s ease;">
+        <h2>¡Pasaporte Lleno! 🎉</h2>
+        <p style="color: white; font-size: 1.2rem; font-weight: bold;">Pasa por tu premio</p>
+    </div>
+
+    <!-- Botón discreto para reiniciar pasaporte en pruebas -->
     <div style="margin-top: 40px;">
         <button onclick="reiniciarPasaporte()" style="background: none; border: none; color: #d1d1d1; font-size: 0.8rem; cursor: pointer; text-decoration: underline;">
             Reiniciar pasaporte
         </button>
     </div>
+
     <script>
-        // Arreglo actualizado con los 11 stands (en minúsculas para las URLs)
         const empresas = [
             'abb', 'aspentech', 'dow', 'emerson', 'engie', 
             'goodway', 'halliburton', 'linde', 'pemex', 'woodside', 'orbia'
@@ -95,10 +110,14 @@
         const parametrosURL = new URLSearchParams(window.location.search);
         const selloEscaneado = parametrosURL.get('sello');
 
+        // 1. Guardar sello en LocalStorage si existe en la URL
         if (selloEscaneado && empresas.includes(selloEscaneado)) {
             localStorage.setItem(selloEscaneado, 'visitado');
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+
+        // 2. Revisar cuántos stands están visitados
+        let sellosCompletados = 0;
 
         empresas.forEach(empresa => {
             const estadoSello = localStorage.getItem(empresa);
@@ -107,14 +126,33 @@
                 if (elemento) {
                     elemento.classList.remove('bloqueado');
                     elemento.classList.add('desbloqueado');
+                    sellosCompletados++;
                 }
             }
         });
-        // Función para resetear el pasaporte
+
+        // 3. Activar celebración digital y mostrar mensaje de premio
+        if (sellosCompletados === empresas.length) {
+            document.getElementById('mensaje-premio').style.display = 'block';
+            
+            // Disparar animación de confeti
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // 4. Función para resetear los datos del navegador
         function reiniciarPasaporte() {
             if(confirm("¿Seguro que quieres borrar todos los sellos?")) {
-                localStorage.clear(); // Borra los datos del navegador
-                window.location.href = window.location.pathname; // Limpia la URL y recarga
+                localStorage.clear();
+                window.location.href = window.location.pathname;
             }
         }
     </script>
