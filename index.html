@@ -158,3 +158,284 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasaporte del Evento</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { color: #333; font-size: 1.8rem; }
+        p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        /* Pantalla de Login */
+        #login-container {
+            margin-top: 50px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .btn-google {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Perfil de Usuario */
+        #user-info {
+            display: none;
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .btn-logout {
+            background-color: #ff4c4c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        /* Cuadrícula del pasaporte (oculta hasta iniciar sesión) */
+        #pasaporte-container {
+            display: none;
+        }
+        .grid-pasaporte {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .sello {
+            background-color: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px; 
+            transition: all 0.3s ease;
+        }
+        .sello img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; 
+            transition: all 0.4s ease;
+        }
+        .bloqueado {
+            border: 2px dashed #d1d1d1;
+            background-color: #fafafa;
+        }
+        .bloqueado img {
+            filter: grayscale(100%) opacity(20%);
+        }
+        .desbloqueado {
+            border: 2px solid #4CAF50;
+            background-color: #ffffff;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
+        }
+        .desbloqueado img {
+            filter: grayscale(0%) opacity(100%);
+        }
+
+        /* Cartel de premio */
+        #mensaje-premio {
+            display: none; 
+            margin-top: 30px; 
+            padding: 20px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border-radius: 12px; 
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <h1>Pasaporte Interactivo</h1>
+
+    <!-- Pantalla de Login -->
+    <div id="login-container">
+        <p>Inicia sesión con tu cuenta de Google para comenzar a coleccionar tus sellos.</p>
+        <button id="btn-login" class="btn-google">Iniciar sesión con Google</button>
+    </div>
+
+    <!-- Información del Usuario -->
+    <div id="user-info">
+        Conectado como: <span id="user-email" style="font-weight: bold;"></span>
+        <button id="btn-logout" class="btn-logout">Cerrar sesión</button>
+    </div>
+
+    <!-- Contenedor Principal del Pasaporte -->
+    <div id="pasaporte-container">
+        <p>Escanea el QR en cada stand para activar su logo.</p>
+        <div class="grid-pasaporte">
+            <div id="stand-abb" class="sello bloqueado"><img src="img/abb.png" alt="ABB"></div>
+            <div id="stand-aspentech" class="sello bloqueado"><img src="img/aspentech.png" alt="AspenTech"></div>
+            <div id="stand-dow" class="sello bloqueado"><img src="img/dow.png" alt="Dow"></div>
+            <div id="stand-emerson" class="sello bloqueado"><img src="img/emerson.png" alt="Emerson"></div>
+            <div id="stand-engie" class="sello bloqueado"><img src="img/engie.png" alt="Engie"></div>
+            <div id="stand-goodway" class="sello bloqueado"><img src="img/Goodway.png" alt="Goodway"></div>
+            <div id="stand-halliburton" class="sello bloqueado"><img src="img/Halliburton.png" alt="Halliburton"></div>
+            <div id="stand-linde" class="sello bloqueado"><img src="img/linde.png" alt="Linde"></div>
+            <div id="stand-pemex" class="sello bloqueado"><img src="img/pemex.png" alt="Pemex"></div>
+            <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
+            <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
+        </div>
+
+        <div id="mensaje-premio">
+            <h2>¡Pasaporte Lleno! 🎉</h2>
+            <p style="color: white; font-size: 1.2rem; font-weight: bold;">Pasa por tu premio</p>
+        </div>
+    </div>
+
+    <!-- Script principal como Módulo para importar Firebase directamente -->
+    <script type="module">
+        // Importar funciones de Firebase desde el CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrivDNeM2xa8y5ixZHvYRw8tpoHuyQty8",
+            authDomain: "pasaporte-evento.firebaseapp.com",
+            projectId: "pasaporte-evento",
+            storageBucket: "pasaporte-evento.firebasestorage.app",
+            messagingSenderId: "827723147076",
+            appId: "1:827723147076:web:2edd3465393ec53fd51911"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        const empresas = [
+            'abb', 'aspentech', 'dow', 'emerson', 'engie', 
+            'goodway', 'halliburton', 'linde', 'pemex', 'woodside', 'orbia'
+        ];
+
+        // Elementos de la interfaz
+        const loginContainer = document.getElementById('login-container');
+        const userInfo = document.getElementById('user-info');
+        const pasaporteContainer = document.getElementById('pasaporte-container');
+        const userEmailSpan = document.getElementById('user-email');
+        const btnLogin = document.getElementById('btn-login');
+        const btnLogout = document.getElementById('btn-logout');
+
+        // Eventos de botones
+        btnLogin.addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(error => console.error("Error al iniciar sesión:", error));
+        });
+
+        btnLogout.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // Detectar si el usuario inicia o cierra sesión
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuario conectado
+                loginContainer.style.display = 'none';
+                userInfo.style.display = 'block';
+                pasaporteContainer.style.display = 'block';
+                userEmailSpan.textContent = user.email;
+
+                await procesarEscaneoQR(user.uid);
+                await cargarSellos(user.uid);
+            } else {
+                // Usuario desconectado
+                loginContainer.style.display = 'inline-block';
+                userInfo.style.display = 'none';
+                pasaporteContainer.style.display = 'none';
+            }
+        });
+
+        // 1. Guardar sello en Base de Datos si hay parámetro en la URL
+        async function procesarEscaneoQR(userId) {
+            const parametrosURL = new URLSearchParams(window.location.search);
+            const selloEscaneado = parametrosURL.get('sello');
+
+            if (selloEscaneado && empresas.includes(selloEscaneado)) {
+                const userRef = doc(db, "usuarios", userId);
+                try {
+                    // Guardar o actualizar el sello en Firestore
+                    await setDoc(userRef, {
+                        [selloEscaneado]: true
+                    }, { merge: true });
+                    
+                    // Limpiar URL sin recargar
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } catch (error) {
+                    console.error("Error guardando sello: ", error);
+                }
+            }
+        }
+
+        // 2. Leer sellos de la Base de Datos y actualizar interfaz
+        async function cargarSellos(userId) {
+            const userRef = doc(db, "usuarios", userId);
+            const docSnap = await getDoc(userRef);
+            let sellosCompletados = 0;
+
+            if (docSnap.exists()) {
+                const datosUsuario = docSnap.data();
+
+                empresas.forEach(empresa => {
+                    if (datosUsuario[empresa] === true) {
+                        const elemento = document.getElementById(`stand-${empresa}`);
+                        if (elemento) {
+                            elemento.classList.remove('bloqueado');
+                            elemento.classList.add('desbloqueado');
+                            sellosCompletados++;
+                        }
+                    }
+                });
+
+                // Activar celebración si tiene los 11
+                if (sellosCompletados === empresas.length) {
+                    document.getElementById('mensaje-premio').style.display = 'block';
+                    dispararConfeti();
+                }
+            }
+        }
+
+        function dispararConfeti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
