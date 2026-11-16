@@ -3,115 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pasaporte del Evento</title>
+<meta name="theme-color" content="#0E1C6E">
+<title>Pasaporte Petrolero · XXXI Semana de Ingeniería Química Petrolera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
   :root {
-    --fondo: #eef2f6;
-    --tinta: #12263a;
-    --tinta-suave: #5b6b7b;
-    --linea: #cfd8e1;
-    --acento: #0b6e99;
-    --ok: #1f9d55;
+    --azul: #1B2FA8;
+    --azul-osc: #0B1560;
+    --azul-tarjeta: rgba(8, 16, 90, .55);
+    --amarillo: #FFD21F;
     --blanco: #ffffff;
+    --texto-suave: #b9c3f5;
+    --linea: rgba(255,255,255,.18);
+    --ok: #3ddc84;
+    --d-lunes: #4FA3B8;
+    --d-martes: #F28C3A;
+    --d-miercoles: #D96AA7;
+    --d-jueves: #7A5BB5;
+    --color-dia: var(--d-lunes);
+    --titulo: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+    --cuerpo: 'Barlow', 'Segoe UI', Tahoma, sans-serif;
   }
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--fondo);
-    color: var(--tinta);
-    min-height: 100vh;
+    margin: 0; min-height: 100vh; color: var(--blanco);
+    font-family: var(--cuerpo);
+    background-color: var(--azul-osc);
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(170deg, var(--azul) 0%, var(--azul-osc) 70%);
+    background-size: 28px 28px, 28px 28px, 100% 100%;
+    background-attachment: fixed;
   }
-  .app { max-width: 480px; margin: 0 auto; padding: 20px 16px 60px; }
-  h1 { font-size: 1.6rem; margin: 8px 0 4px; text-align: center; }
-  .sub { color: var(--tinta-suave); font-size: .92rem; text-align: center; margin: 0 0 18px; }
+  .app { max-width: 480px; margin: 0 auto; padding: 18px 16px 70px; }
 
-  /* Login */
+  /* ---------- Cabecera ---------- */
+  .cabecera { text-align: center; }
+  .logos { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .insignia {
+    width: 64px; height: 64px; background: var(--blanco); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; padding: 6px; flex: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  .insignia img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .evento { font-size: .82rem; line-height: 1.25; color: var(--texto-suave); font-weight: 500; }
+  .evento b { color: var(--blanco); font-weight: 600; display: block; font-size: .9rem; }
+  h1 {
+    margin: 18px 0 4px; font-family: var(--titulo); font-weight: 800;
+    font-size: clamp(3rem, 15vw, 4.2rem); line-height: .88; letter-spacing: .5px; text-transform: uppercase;
+  }
+  h1 span { display: block; color: var(--amarillo); }
+  .fechas {
+    display: inline-block; margin-top: 12px; padding: 6px 16px; border: 1.5px solid var(--amarillo);
+    border-radius: 99px; color: var(--amarillo); font-size: .85rem; font-weight: 600;
+  }
+
+  /* ---------- Login ---------- */
   #login {
-    background: var(--blanco); border-radius: 16px; padding: 28px 20px;
-    text-align: center; box-shadow: 0 4px 14px rgba(18,38,58,.08); margin-top: 40px;
+    margin-top: 26px; padding: 26px 20px; text-align: center;
+    background: var(--azul-tarjeta); border: 1px solid var(--linea); border-radius: 18px;
+    backdrop-filter: blur(6px);
   }
+  #login h2 { font-family: var(--titulo); font-weight: 700; font-size: 1.7rem; margin: 0 0 6px; }
+  #login p { margin: 0 0 18px; color: var(--texto-suave); font-size: .95rem; line-height: 1.4; }
   .btn-google {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--blanco); color: var(--tinta); border: 1px solid var(--linea);
-    padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 10px; background: var(--blanco); color: #1d2433;
+    border: none; padding: 13px 22px; border-radius: 12px; font: 600 1rem var(--cuerpo); cursor: pointer;
   }
-  .btn-google:hover { background: #f6f9fc; }
   .btn-google svg { width: 20px; height: 20px; }
-  #error { color: #c0392b; font-size: .85rem; margin-top: 12px; min-height: 1em; }
+  #error { color: #ffb4a8; font-size: .88rem; margin-top: 12px; min-height: 1em; }
 
-  /* Usuario */
+  /* ---------- Usuario ---------- */
   #usuario {
-    display: none; align-items: center; justify-content: space-between; gap: 8px;
-    background: var(--blanco); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
-    font-size: .85rem; box-shadow: 0 2px 8px rgba(18,38,58,.06);
+    display: none; align-items: center; gap: 10px; margin-top: 20px; padding: 8px 12px;
+    background: var(--azul-tarjeta); border: 1px solid var(--linea); border-radius: 14px; font-size: .88rem;
   }
-  #usuario span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #btn-salir { background: none; border: none; color: var(--acento); cursor: pointer; font-size: .85rem; text-decoration: underline; }
+  #usuario img { width: 32px; height: 32px; border-radius: 50%; background: var(--blanco); flex: none; }
+  #usuario .quien { flex: 1; min-width: 0; line-height: 1.2; }
+  #usuario .quien b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #usuario .quien small { color: var(--texto-suave); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #btn-salir { background: none; border: none; color: var(--amarillo); font: 600 .82rem var(--cuerpo); cursor: pointer; text-decoration: underline; }
 
-  /* Pestañas de días */
-  #pasaporte { display: none; }
+  /* ---------- Días ---------- */
+  #pasaporte { display: none; margin-top: 16px; }
   .dias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .dia {
-    border: 2px solid var(--linea); background: var(--blanco); color: var(--tinta);
-    border-radius: 12px; padding: 10px 4px; cursor: pointer; font-size: .85rem; font-weight: 600;
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    --c: var(--d-lunes);
+    background: rgba(255,255,255,.07); border: 2px solid var(--c); color: var(--blanco);
+    border-radius: 14px; padding: 9px 2px 8px; cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; line-height: 1.1;
+    font-family: var(--titulo); font-weight: 700; font-size: 1.05rem;
   }
-  .dia small { font-weight: 400; color: var(--tinta-suave); font-size: .72rem; }
-  .dia[aria-selected="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--blanco); }
-  .dia[aria-selected="true"] small { color: #b9c7d4; }
-  .dia.completo { border-color: var(--ok); }
-  .dia:focus-visible, .btn-google:focus-visible, #btn-salir:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+  .dia .num { font-size: 1.7rem; font-weight: 800; }
+  .dia small { font: 500 .72rem var(--cuerpo); opacity: .85; margin-top: 2px; }
+  .dia[aria-selected="true"] { background: var(--c); color: #101a4d; }
+  .dia.completo small::after { content: " ✓"; }
 
-  /* Progreso */
-  .progreso { margin: 18px 0 6px; font-size: .88rem; color: var(--tinta-suave); display: flex; justify-content: space-between; }
-  .barra { height: 8px; background: var(--linea); border-radius: 99px; overflow: hidden; }
-  .barra > div { height: 100%; width: 0; background: var(--ok); transition: width .4s ease; }
-
-  /* Sellos */
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
-  .sello {
-    background: var(--blanco); border-radius: 12px; padding: 8px; height: 84px;
-    display: flex; align-items: center; justify-content: center; text-align: center;
-    font-weight: 700; font-size: .78rem; color: var(--tinta); word-break: break-word;
-    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  /* ---------- Medidor ---------- */
+  .medidor { margin: 18px 0 6px; }
+  .medidor-fila { display: flex; align-items: baseline; justify-content: space-between; }
+  .medidor-fila .nombre { font-family: var(--titulo); font-weight: 700; font-size: 1.25rem; }
+  .medidor-fila .cuenta { font-family: var(--titulo); font-weight: 800; font-size: 2.2rem; color: var(--amarillo); line-height: 1; }
+  .cuenta small { font-size: 1.1rem; color: var(--texto-suave); font-weight: 600; }
+  .tanque {
+    position: relative; height: 14px; border-radius: 99px; background: rgba(0,0,0,.35);
+    border: 1.5px solid var(--linea); overflow: hidden; margin-top: 8px;
   }
-  .sello img { max-width: 100%; max-height: 100%; object-fit: contain; transition: filter .4s ease; }
-  .sello.bloqueado { border: 2px dashed #c3cdd7; background: #f8fafc; }
-  .sello.bloqueado img { filter: grayscale(100%) opacity(25%); }
-  .sello.bloqueado .nombre { opacity: .3; }
-  .sello.desbloqueado {
-    border: 2px solid var(--ok); transform: scale(1.04);
-    box-shadow: 0 6px 12px rgba(31,157,85,.22);
+  .tanque .nivel { height: 100%; width: 0; background: var(--amarillo); border-radius: 99px; transition: width .6s ease; }
+  .tanque .marcas {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1.5px), rgba(11,21,96,.7) calc(10% - 1.5px) 10%);
   }
 
-  /* Premio */
+  /* ---------- Tarjetas de stands ---------- */
+  .lista { display: grid; gap: 10px; margin-top: 16px; padding: 0; list-style: none; }
+  .stand {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px;
+    background: var(--azul-tarjeta); border: 1.5px dashed var(--linea);
+    transition: border-color .3s ease, background .3s ease;
+  }
+  .stand .logo {
+    width: 54px; height: 54px; flex: none; background: var(--blanco); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; padding: 5px; overflow: hidden;
+    font: 800 1.1rem var(--titulo); color: var(--azul);
+  }
+  .stand .logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .stand .datos { flex: 1; min-width: 0; }
+  .stand .datos b { display: block; font-size: 1.02rem; font-weight: 600; }
+  .stand .estado {
+    display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 99px;
+    font-size: .74rem; font-weight: 600; border: 1.2px solid var(--linea); color: var(--texto-suave);
+  }
+  .stand.pendiente .logo { filter: grayscale(1); opacity: .45; }
+  .stand.sellado { border: 1.5px solid var(--amarillo); background: rgba(255, 210, 31, .1); }
+  .stand.sellado .estado { background: var(--amarillo); border-color: var(--amarillo); color: #101a4d; }
+  .stand.sellado .logo { animation: sello .55s cubic-bezier(.2,1.6,.4,1); }
+  .stand .check { font-size: 1.4rem; color: var(--amarillo); flex: none; }
+  @keyframes sello { 0% { transform: scale(1.7) rotate(-12deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+
+  /* ---------- Premio ---------- */
   #premio {
-    display: none; margin-top: 24px; padding: 18px; background: var(--ok); color: #fff;
-    border-radius: 14px; text-align: center; animation: pop .5s ease;
+    display: none; margin-top: 22px; padding: 22px 16px; text-align: center; border-radius: 20px;
+    background: var(--amarillo); color: #101a4d; animation: sello .6s ease;
   }
-  #premio h2 { margin: 0 0 4px; font-size: 1.2rem; }
-  #premio p { margin: 0; font-weight: 700; }
-  @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  #premio .xxxi { font-family: var(--titulo); font-weight: 800; font-size: 3rem; line-height: .9; }
+  #premio h2 { margin: 6px 0 2px; font-family: var(--titulo); font-weight: 800; font-size: 1.8rem; text-transform: uppercase; }
+  #premio p { margin: 0; font-weight: 600; font-size: 1.05rem; }
 
-  /* Aviso de sello nuevo */
+  /* ---------- Pantalla de sello conseguido ---------- */
+  #overlay {
+    position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center; padding: 24px;
+    background: radial-gradient(circle at 50% 35%, var(--azul) 0%, var(--azul-osc) 75%);
+  }
+  #overlay.visible { display: flex; }
+  #overlay .logo-grande {
+    width: 150px; height: 150px; background: var(--blanco); border-radius: 28px; padding: 14px;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 22px;
+    font: 800 3rem var(--titulo); color: var(--azul); animation: sello .6s cubic-bezier(.2,1.6,.4,1);
+    box-shadow: 0 0 0 6px var(--amarillo), 0 10px 40px rgba(0,0,0,.4);
+  }
+  #overlay .logo-grande img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  #overlay h2 { font-family: var(--titulo); font-weight: 800; font-size: 2.6rem; color: var(--amarillo); margin: 0; text-transform: uppercase; line-height: 1; }
+  #overlay p { margin: 8px 0 24px; font-size: 1.1rem; }
+  #overlay button {
+    background: var(--amarillo); color: #101a4d; border: none; border-radius: 12px;
+    padding: 13px 28px; font: 700 1rem var(--cuerpo); cursor: pointer;
+  }
+
+  /* ---------- Aviso ---------- */
   #toast {
-    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 120px);
-    background: var(--tinta); color: #fff; padding: 12px 18px; border-radius: 10px;
-    font-size: .9rem; transition: transform .35s ease; max-width: 90%; text-align: center;
+    position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 140px); z-index: 30;
+    background: var(--blanco); color: #101a4d; padding: 12px 18px; border-radius: 12px;
+    font-size: .92rem; font-weight: 600; max-width: 90%; text-align: center; transition: transform .35s ease;
+    box-shadow: 0 6px 24px rgba(0,0,0,.35);
   }
   #toast.visible { transform: translate(-50%, 0); }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  :focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>Pasaporte del Evento</h1>
 
-  <!-- 1. Inicio de sesión -->
+  <header class="cabecera">
+    <div class="logos">
+      <div class="insignia"><img src="img/esiqie.png" alt="ESIQIE"></div>
+      <div class="evento"><b>XXXI Semana de Ingeniería Química Petrolera</b>ESIQIE-IPN</div>
+      <div class="insignia"><img src="img/ipn.png" alt="IPN"></div>
+    </div>
+    <h1>Pasaporte <span>Petrolero</span></h1>
+    <div class="fechas">23 al 27 de noviembre de 2026</div>
+  </header>
+
+  <!-- Login -->
   <section id="login">
-    <p class="sub">Inicia sesión con tu cuenta de Gmail para empezar a coleccionar sellos.</p>
+    <h2>Inicia sesión para sellar tu pasaporte</h2>
+    <p>Usa tu cuenta de Gmail. Cada stand que visites suma un sello.</p>
     <button id="btn-login" class="btn-google">
       <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
       Continuar con Google
@@ -120,19 +214,40 @@
   </section>
 
   <!-- Usuario -->
-  <div id="usuario"><span id="correo"></span><button id="btn-salir">Cerrar sesión</button></div>
+  <div id="usuario">
+    <img id="foto" alt="" referrerpolicy="no-referrer">
+    <div class="quien"><b id="nombre"></b><small id="correo"></small></div>
+    <button id="btn-salir">Cerrar sesión</button>
+  </div>
 
-  <!-- 2. Pasaporte -->
+  <!-- Pasaporte -->
   <section id="pasaporte">
     <div class="dias" role="tablist" id="dias"></div>
-    <div class="progreso"><span id="progreso-texto"></span><span id="progreso-dia"></span></div>
-    <div class="barra"><div id="barra-llenado"></div></div>
-    <div class="grid" id="grid" role="tabpanel"></div>
+
+    <div class="medidor">
+      <div class="medidor-fila">
+        <span class="nombre" id="medidor-nombre"></span>
+        <span class="cuenta" id="medidor-cuenta"></span>
+      </div>
+      <div class="tanque"><div class="nivel" id="nivel"></div><div class="marcas"></div></div>
+    </div>
+
+    <ul class="lista" id="lista"></ul>
+
     <div id="premio">
-      <h2>¡Pasaporte del día completo! 🎉</h2>
+      <div class="xxxi">XXXI</div>
+      <h2>¡Día completo!</h2>
       <p>Pasa por tu premio</p>
     </div>
   </section>
+</div>
+
+<!-- Sello conseguido -->
+<div id="overlay" role="dialog" aria-live="polite">
+  <div class="logo-grande" id="overlay-logo"></div>
+  <h2>¡Sello conseguido!</h2>
+  <p id="overlay-texto"></p>
+  <button id="overlay-cerrar">Ver mi pasaporte</button>
 </div>
 <div id="toast" role="status"></div>
 
@@ -153,11 +268,9 @@ const firebaseConfig = {
   appId: "1:827723147076:web:2edd3465393ec53fd51911"
 };
 
-// true = solo permite correos @gmail.com
-const SOLO_GMAIL = false;
+const SOLO_GMAIL = false;   // true = solo correos @gmail.com
 
-// Catálogo de stands: id (el que va en el QR) → nombre visible y archivo del logo.
-// Los archivos van en la carpeta img/. Si falta alguno, se muestra el nombre en texto.
+// id = lo que va en el QR (?sello=...). Los logos van en la carpeta img/.
 const STANDS = {
   linde:       { nombre: "Linde",       img: "img/linde.png" },
   koehler:     { nombre: "Koehler",     img: "img/koehler.png" },
@@ -178,12 +291,15 @@ const STANDS = {
   lukoil:      { nombre: "Lukoil",      img: "img/lukoil.png" }
 };
 
-// Stands por día (según tu hoja de cálculo)
 const DIAS = {
-  lunes:     { etiqueta: "Lunes",     stands: ["linde","koehler","abb","emerson","sica","g2h","spe","secovam","adriannava","probecarios"] },
-  martes:    { etiqueta: "Martes",    stands: ["linde","koehler","dow","emerson","cryoinfra","g2h","sica","secovam","adriannava","probecarios"] },
-  miercoles: { etiqueta: "Miércoles", stands: ["cryoinfra","koehler","dow","emerson","goodway","g2h","sica","secovam","adriannava"] },
-  jueves:    { etiqueta: "Jueves",    stands: ["ampp","spe","clayton","arkema","lukoil","g2h","sica","secovam","adriannava"] }
+  lunes:     { etiqueta: "Lunes",     corto: "Lun", fecha: "23", color: "var(--d-lunes)",
+               stands: ["linde","koehler","abb","emerson","sica","g2h","spe","secovam","adriannava","probecarios"] },
+  martes:    { etiqueta: "Martes",    corto: "Mar", fecha: "24", color: "var(--d-martes)",
+               stands: ["linde","koehler","dow","emerson","cryoinfra","g2h","sica","secovam","adriannava","probecarios"] },
+  miercoles: { etiqueta: "Miércoles", corto: "Mié", fecha: "25", color: "var(--d-miercoles)",
+               stands: ["cryoinfra","koehler","dow","emerson","goodway","g2h","sica","secovam","adriannava"] },
+  jueves:    { etiqueta: "Jueves",    corto: "Jue", fecha: "26", color: "var(--d-jueves)",
+               stands: ["ampp","spe","clayton","arkema","lukoil","g2h","sica","secovam","adriannava"] }
 };
 /* ================================================== */
 
@@ -194,23 +310,18 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
 const $ = id => document.getElementById(id);
-let uid = null;
-let sellos = {};          // { lunes: { linde: true, ... }, ... }
-let diaActual = null;
+let uid = null, sellos = {}, diaActual = null;
 
-/* ---------- Día por defecto: el de hoy si es del evento, si no lunes ---------- */
 function diaDeHoy() {
-  const nombres = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
-  const hoy = nombres[new Date().getDay()];
-  return DIAS[hoy] ? hoy : "lunes";
+  const n = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"][new Date().getDay()];
+  return DIAS[n] ? n : "lunes";
 }
 
-/* ---------- Login / logout ---------- */
+/* ---------- Sesión ---------- */
 $("btn-login").addEventListener("click", async () => {
   $("error").textContent = "";
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (e) {
+  try { await signInWithPopup(auth, provider); }
+  catch (e) {
     if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") {
       signInWithRedirect(auth, provider);
     } else if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
@@ -227,42 +338,42 @@ onAuthStateChanged(auth, async user => {
     $("error").textContent = "Usa una cuenta de Gmail para participar.";
     return;
   }
-  if (user) {
-    uid = user.uid;
-    $("login").style.display = "none";
-    $("usuario").style.display = "flex";
-    $("pasaporte").style.display = "block";
-    $("correo").textContent = user.email;
-
-    const escaneo = leerQR();
-    diaActual = escaneo ? escaneo.dia : (diaActual || diaDeHoy());
-    await cargarSellos();
-    if (escaneo) await registrarSello(escaneo.dia, escaneo.sello);
-    pintarDias();
-    pintarDia();
-  } else {
+  if (!user) {
     uid = null; sellos = {};
     $("login").style.display = "block";
     $("usuario").style.display = "none";
     $("pasaporte").style.display = "none";
+    return;
   }
+  uid = user.uid;
+  $("login").style.display = "none";
+  $("usuario").style.display = "flex";
+  $("pasaporte").style.display = "block";
+  $("nombre").textContent = "Hola, " + ((user.displayName || user.email).split(" ")[0]);
+  $("correo").textContent = user.email;
+  if (user.photoURL) $("foto").src = user.photoURL; else $("foto").style.display = "none";
+
+  const qr = leerQR();
+  diaActual = (qr && DIAS[qr.dia]) ? qr.dia : (diaActual || diaDeHoy());
+  await cargarSellos();
+  const nuevo = qr ? await registrarSello(qr.dia, qr.sello) : null;
+  pintarDias();
+  pintarDia(!nuevo);
+  if (nuevo) mostrarOverlay(nuevo);
 });
 
 /* ---------- QR: ?dia=lunes&sello=linde ---------- */
 function leerQR() {
   const p = new URLSearchParams(window.location.search);
   const sello = (p.get("sello") || "").toLowerCase();
-  let dia = (p.get("dia") || "").toLowerCase();
   if (!sello) return null;
-  if (!dia) dia = diaDeHoy();               // si el QR no trae día, usa el de hoy
-  return { dia, sello };
+  return { dia: (p.get("dia") || diaDeHoy()).toLowerCase(), sello };
 }
 
 async function registrarSello(dia, sello) {
-  const valido = DIAS[dia] && DIAS[dia].stands.includes(sello);
   window.history.replaceState({}, document.title, window.location.pathname);
-  if (!valido) { aviso("Este QR no corresponde a un stand de ese día."); return; }
-  if (sellos[dia]?.[sello]) { aviso(`Ya tenías el sello de ${STANDS[sello].nombre}.`); return; }
+  if (!DIAS[dia] || !DIAS[dia].stands.includes(sello)) { aviso("Este QR no corresponde a un stand de ese día."); return null; }
+  if (sellos[dia]?.[sello]) { aviso(`Ya tenías el sello de ${STANDS[sello].nombre}.`); return null; }
   try {
     await setDoc(doc(db, "usuarios", uid), {
       email: auth.currentUser.email,
@@ -270,10 +381,11 @@ async function registrarSello(dia, sello) {
       sellos: { [dia]: { [sello]: true } }
     }, { merge: true });
     sellos[dia] = { ...(sellos[dia] || {}), [sello]: true };
-    aviso(`¡Sello de ${STANDS[sello].nombre} conseguido!`);
+    return sello;
   } catch (e) {
     console.error(e);
     aviso("No se pudo guardar el sello. Revisa tu conexión e inténtalo otra vez.");
+    return null;
   }
 }
 
@@ -285,60 +397,78 @@ async function cargarSellos() {
 }
 
 /* ---------- Interfaz ---------- */
-function conteoDia(dia) {
-  const lista = DIAS[dia].stands;
-  return { hechos: lista.filter(s => sellos[dia]?.[s]).length, total: lista.length };
+function conteo(dia) {
+  const l = DIAS[dia].stands;
+  return { hechos: l.filter(s => sellos[dia]?.[s]).length, total: l.length };
+}
+
+function logoEn(contenedor, stand) {
+  contenedor.textContent = "";
+  const img = document.createElement("img");
+  img.src = stand.img; img.alt = stand.nombre;
+  img.onerror = () => { contenedor.textContent = stand.nombre.slice(0, 2).toUpperCase(); };
+  contenedor.appendChild(img);
 }
 
 function pintarDias() {
   const cont = $("dias");
   cont.innerHTML = "";
-  Object.entries(DIAS).forEach(([clave, d]) => {
-    const { hechos, total } = conteoDia(clave);
+  for (const [clave, d] of Object.entries(DIAS)) {
+    const { hechos, total } = conteo(clave);
     const b = document.createElement("button");
     b.className = "dia" + (hechos === total ? " completo" : "");
+    b.style.setProperty("--c", d.color);
     b.setAttribute("role", "tab");
     b.setAttribute("aria-selected", clave === diaActual);
-    b.innerHTML = `${d.etiqueta}<small>${hechos}/${total}</small>`;
+    b.innerHTML = `${d.corto}<span class="num">${d.fecha}</span><small>${hechos}/${total}</small>`;
     b.addEventListener("click", () => { diaActual = clave; pintarDias(); pintarDia(false); });
     cont.appendChild(b);
-  });
+  }
 }
 
-function pintarDia(celebrar = true) {
+function pintarDia(celebrar) {
   const d = DIAS[diaActual];
-  const { hechos, total } = conteoDia(diaActual);
-  const grid = $("grid");
-  grid.innerHTML = "";
+  const { hechos, total } = conteo(diaActual);
 
-  d.stands.forEach(id => {
-    const s = STANDS[id];
-    const el = document.createElement("div");
-    el.className = "sello " + (sellos[diaActual]?.[id] ? "desbloqueado" : "bloqueado");
-    const img = document.createElement("img");
-    img.src = s.img; img.alt = s.nombre;
-    img.onerror = () => {                      // sin logo: muestra el nombre
-      img.remove();
-      const t = document.createElement("span");
-      t.className = "nombre"; t.textContent = s.nombre;
-      el.appendChild(t);
-    };
-    el.appendChild(img);
-    grid.appendChild(el);
-  });
+  $("medidor-nombre").textContent = `${d.etiqueta} ${d.fecha} de noviembre`;
+  $("medidor-cuenta").innerHTML = `${hechos}<small> / ${total}</small>`;
+  $("nivel").style.width = (hechos / total * 100) + "%";
 
-  $("progreso-texto").textContent = `Sellos del ${d.etiqueta.toLowerCase()}`;
-  $("progreso-dia").textContent = `${hechos} de ${total}`;
-  $("barra-llenado").style.width = (hechos / total * 100) + "%";
+  const lista = $("lista");
+  lista.innerHTML = "";
+  for (const id of d.stands) {
+    const s = STANDS[id], listo = !!sellos[diaActual]?.[id];
+    const li = document.createElement("li");
+    li.className = "stand " + (listo ? "sellado" : "pendiente");
+    const logo = document.createElement("div"); logo.className = "logo"; logoEn(logo, s);
+    const datos = document.createElement("div"); datos.className = "datos";
+    datos.innerHTML = `<b></b><span class="estado">${listo ? "Sellado" : "Pendiente"}</span>`;
+    datos.querySelector("b").textContent = s.nombre;
+    li.append(logo, datos);
+    if (listo) { const c = document.createElement("span"); c.className = "check"; c.textContent = "✓"; li.appendChild(c); }
+    lista.appendChild(li);
+  }
 
   const completo = hechos === total;
   $("premio").style.display = completo ? "block" : "none";
   if (completo && celebrar) confeti();
 }
 
+function mostrarOverlay(id) {
+  const s = STANDS[id];
+  logoEn($("overlay-logo"), s);
+  $("overlay-texto").textContent = `Visitaste el stand de ${s.nombre}.`;
+  $("overlay").classList.add("visible");
+  if (navigator.vibrate) navigator.vibrate([80, 60, 120]);
+}
+$("overlay-cerrar").addEventListener("click", () => {
+  $("overlay").classList.remove("visible");
+  pintarDia(true);
+});
+
 function confeti() {
   const fin = Date.now() + 3000;
-  const base = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+  const base = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 50, colors: ["#FFD21F", "#1B2FA8", "#ffffff"] };
   const t = setInterval(() => {
     const resta = fin - Date.now();
     if (resta <= 0) return clearInterval(t);
