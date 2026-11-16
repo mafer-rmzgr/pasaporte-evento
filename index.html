@@ -355,7 +355,7 @@ function rgb01(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) / 
 function selloSVG(id, listo) {
   const s = STANDS[id], h = hash(id);
   const f = FORMAS[h % FORMAS.length];
-  const tinta = listo ? TINTAS[(h >> 3) % TINTAS.length] : "#B5AE98";
+  const tinta = listo ? TINTAS[(h >>> 3) % TINTAS.length] : "#B5AE98";
   const u = ++contSvg, [r, g, b] = rgb01(tinta);
   const nombre = s.nombre.toUpperCase();
   const ajuste = nombre.length * 6.3 > f.ancho ? ` textLength="${f.ancho}" lengthAdjust="spacingAndGlyphs"` : "";
@@ -377,7 +377,7 @@ function selloSVG(id, listo) {
   const logo = listo
     ? `<image href="${s.img}" x="${f.logo[0]}" y="${f.logo[1]}" width="${f.logo[2]}" height="${f.logo[3]}" preserveAspectRatio="xMidYMid meet" filter="url(#t${u})"/>` : "";
   const txt = `<text x="50" y="${f.nombre}" text-anchor="middle" ${fam} font-weight="800" font-size="12" fill="${tinta}"${ajuste}>${nombre}</text>`;
-  const giro = listo ? (h >> 5) % 9 - 4 : 0;
+  const giro = listo ? (h >>> 5) % 9 - 4 : 0;
   return `<svg viewBox="0 0 100 100" role="img" aria-label="${listo ? "Sello" : "Sello pendiente"} de ${s.nombre}">
     ${defs}<g ${listo ? `filter="url(#r${u})" opacity=".92"` : ""} transform="rotate(${giro} 50 50)">${borde}${arriba}${logo}${txt}</g></svg>`;
 }
