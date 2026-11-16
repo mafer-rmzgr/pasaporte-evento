@@ -76,6 +76,10 @@
   .btn-google svg { width: 20px; height: 20px; }
   #error { color: #ffb4a8; font-size: .88rem; margin-top: 12px; min-height: 1em; }
 
+  .nota-nav { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--linea); }
+  .nota-nav p { margin: 0 0 6px; font-size: .82rem; color: var(--suave); line-height: 1.4; }
+  .nota-nav b { color: #fff; }
+
   /* ================= Portada ================= */
   .portada-wrap { display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 10px; }
   .portada {
@@ -208,6 +212,10 @@
         Continuar con Google
       </button>
       <div id="error" role="alert"></div>
+      <div class="nota-nav">
+        <p>¿Abriste el enlace desde WhatsApp, Instagram o un lector de QR? Si el inicio de sesión falla, ábrelo en <b>Safari</b> o <b>Chrome</b>.</p>
+        <button id="btn-copiar" class="link-salir" type="button">Copiar enlace</button>
+      </div>
     </section>
   </div>
 
@@ -278,7 +286,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
-import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut }
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
@@ -398,13 +406,15 @@ $("btn-login").addEventListener("click", async () => {
   $("error").textContent = "";
   try { await signInWithPopup(auth, provider); }
   catch (e) {
-    if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") {
-      signInWithRedirect(auth, provider);
-    } else if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
-      $("error").textContent = "No se pudo iniciar sesión. Abre esta página en Chrome o Safari e inténtalo de nuevo.";
-      console.error(e);
-    }
+    if (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request") return;
+    $("error").textContent = "No se pudo iniciar sesión aquí. Abre este enlace en Safari o Chrome (botón de abajo) e inténtalo de nuevo.";
+    console.error(e);
   }
+});
+$("btn-copiar").addEventListener("click", async () => {
+  const url = window.location.origin + window.location.pathname;
+  try { await navigator.clipboard.writeText(url); aviso("Enlace copiado. Pégalo en Safari o Chrome."); }
+  catch { prompt("Copia este enlace y ábrelo en Safari o Chrome:", url); }
 });
 $("btn-salir-1").addEventListener("click", () => signOut(auth));
 $("btn-salir-2").addEventListener("click", () => signOut(auth));
