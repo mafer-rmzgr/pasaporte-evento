@@ -1,441 +1,358 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasaporte del Evento</title>
-    <!-- Librería para la celebración digital con confeti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        h1 { color: #333; font-size: 1.8rem; }
-        p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        .grid-pasaporte {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasaporte del Evento</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+  :root {
+    --fondo: #eef2f6;
+    --tinta: #12263a;
+    --tinta-suave: #5b6b7b;
+    --linea: #cfd8e1;
+    --acento: #0b6e99;
+    --ok: #1f9d55;
+    --blanco: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--fondo);
+    color: var(--tinta);
+    min-height: 100vh;
+  }
+  .app { max-width: 480px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 1.6rem; margin: 8px 0 4px; text-align: center; }
+  .sub { color: var(--tinta-suave); font-size: .92rem; text-align: center; margin: 0 0 18px; }
 
-        .sello {
-            background-color: white;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 80px; 
-            transition: all 0.3s ease;
-        }
+  /* Login */
+  #login {
+    background: var(--blanco); border-radius: 16px; padding: 28px 20px;
+    text-align: center; box-shadow: 0 4px 14px rgba(18,38,58,.08); margin-top: 40px;
+  }
+  .btn-google {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--blanco); color: var(--tinta); border: 1px solid var(--linea);
+    padding: 12px 20px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;
+  }
+  .btn-google:hover { background: #f6f9fc; }
+  .btn-google svg { width: 20px; height: 20px; }
+  #error { color: #c0392b; font-size: .85rem; margin-top: 12px; min-height: 1em; }
 
-        .sello img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; 
-            transition: all 0.4s ease;
-        }
+  /* Usuario */
+  #usuario {
+    display: none; align-items: center; justify-content: space-between; gap: 8px;
+    background: var(--blanco); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+    font-size: .85rem; box-shadow: 0 2px 8px rgba(18,38,58,.06);
+  }
+  #usuario span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #btn-salir { background: none; border: none; color: var(--acento); cursor: pointer; font-size: .85rem; text-decoration: underline; }
 
-        .bloqueado {
-            border: 2px dashed #d1d1d1;
-            background-color: #fafafa;
-        }
-        .bloqueado img {
-            filter: grayscale(100%) opacity(20%);
-        }
+  /* Pestañas de días */
+  #pasaporte { display: none; }
+  .dias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .dia {
+    border: 2px solid var(--linea); background: var(--blanco); color: var(--tinta);
+    border-radius: 12px; padding: 10px 4px; cursor: pointer; font-size: .85rem; font-weight: 600;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .dia small { font-weight: 400; color: var(--tinta-suave); font-size: .72rem; }
+  .dia[aria-selected="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--blanco); }
+  .dia[aria-selected="true"] small { color: #b9c7d4; }
+  .dia.completo { border-color: var(--ok); }
+  .dia:focus-visible, .btn-google:focus-visible, #btn-salir:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
 
-        .desbloqueado {
-            border: 2px solid #4CAF50;
-            background-color: #ffffff;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
-        }
-        .desbloqueado img {
-            filter: grayscale(0%) opacity(100%);
-        }
+  /* Progreso */
+  .progreso { margin: 18px 0 6px; font-size: .88rem; color: var(--tinta-suave); display: flex; justify-content: space-between; }
+  .barra { height: 8px; background: var(--linea); border-radius: 99px; overflow: hidden; }
+  .barra > div { height: 100%; width: 0; background: var(--ok); transition: width .4s ease; }
 
-        /* Animación para el cartel de premio */
-        @keyframes popIn { 
-            0% { transform: scale(0.5); opacity: 0; } 
-            100% { transform: scale(1); opacity: 1; } 
-        }
-    </style>
+  /* Sellos */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .sello {
+    background: var(--blanco); border-radius: 12px; padding: 8px; height: 84px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-weight: 700; font-size: .78rem; color: var(--tinta); word-break: break-word;
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .sello img { max-width: 100%; max-height: 100%; object-fit: contain; transition: filter .4s ease; }
+  .sello.bloqueado { border: 2px dashed #c3cdd7; background: #f8fafc; }
+  .sello.bloqueado img { filter: grayscale(100%) opacity(25%); }
+  .sello.bloqueado .nombre { opacity: .3; }
+  .sello.desbloqueado {
+    border: 2px solid var(--ok); transform: scale(1.04);
+    box-shadow: 0 6px 12px rgba(31,157,85,.22);
+  }
+
+  /* Premio */
+  #premio {
+    display: none; margin-top: 24px; padding: 18px; background: var(--ok); color: #fff;
+    border-radius: 14px; text-align: center; animation: pop .5s ease;
+  }
+  #premio h2 { margin: 0 0 4px; font-size: 1.2rem; }
+  #premio p { margin: 0; font-weight: 700; }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* Aviso de sello nuevo */
+  #toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 120px);
+    background: var(--tinta); color: #fff; padding: 12px 18px; border-radius: 10px;
+    font-size: .9rem; transition: transform .35s ease; max-width: 90%; text-align: center;
+  }
+  #toast.visible { transform: translate(-50%, 0); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
 </head>
 <body>
+<div class="app">
+  <h1>Pasaporte del Evento</h1>
 
-    <h1>Pasaporte Interactivo</h1>
-    <p>Escanea el QR en cada stand para activar su logo.</p>
+  <!-- 1. Inicio de sesión -->
+  <section id="login">
+    <p class="sub">Inicia sesión con tu cuenta de Gmail para empezar a coleccionar sellos.</p>
+    <button id="btn-login" class="btn-google">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+      Continuar con Google
+    </button>
+    <div id="error" role="alert"></div>
+  </section>
 
-    <div class="grid-pasaporte">
-        <!-- Imágenes y stands -->
-        <div id="stand-abb" class="sello bloqueado"><img src="img/abb.png" alt="ABB"></div>
-        <div id="stand-aspentech" class="sello bloqueado"><img src="img/aspentech.png" alt="AspenTech"></div>
-        <div id="stand-dow" class="sello bloqueado"><img src="img/dow.png" alt="Dow"></div>
-        <div id="stand-emerson" class="sello bloqueado"><img src="img/emerson.png" alt="Emerson"></div>
-        <div id="stand-engie" class="sello bloqueado"><img src="img/engie.png" alt="Engie"></div>
-        <div id="stand-goodway" class="sello bloqueado"><img src="img/Goodway.png" alt="Goodway"></div>
-        <div id="stand-halliburton" class="sello bloqueado"><img src="img/Halliburton.png" alt="Halliburton"></div>
-        <div id="stand-linde" class="sello bloqueado"><img src="img/linde.png" alt="Linde"></div>
-        <div id="stand-pemex" class="sello bloqueado"><img src="img/pemex.png" alt="Pemex"></div>
-        <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
-        <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
+  <!-- Usuario -->
+  <div id="usuario"><span id="correo"></span><button id="btn-salir">Cerrar sesión</button></div>
+
+  <!-- 2. Pasaporte -->
+  <section id="pasaporte">
+    <div class="dias" role="tablist" id="dias"></div>
+    <div class="progreso"><span id="progreso-texto"></span><span id="progreso-dia"></span></div>
+    <div class="barra"><div id="barra-llenado"></div></div>
+    <div class="grid" id="grid" role="tabpanel"></div>
+    <div id="premio">
+      <h2>¡Pasaporte del día completo! 🎉</h2>
+      <p>Pasa por tu premio</p>
     </div>
+  </section>
+</div>
+<div id="toast" role="status"></div>
 
-    <!-- Mensaje de Pasa por tu premio, oculto por defecto -->
-    <div id="mensaje-premio" style="display: none; margin-top: 30px; padding: 20px; background-color: #4CAF50; color: white; border-radius: 12px; animation: popIn 0.5s ease;">
-        <h2>¡Pasaporte Lleno! 🎉</h2>
-        <p style="color: white; font-size: 1.2rem; font-weight: bold;">Pasa por tu premio</p>
-    </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc }
+  from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
 
-    <!-- Botón discreto para reiniciar pasaporte en pruebas -->
-    <div style="margin-top: 40px;">
-        <button onclick="reiniciarPasaporte()" style="background: none; border: none; color: #d1d1d1; font-size: 0.8rem; cursor: pointer; text-decoration: underline;">
-            Reiniciar pasaporte
-        </button>
-    </div>
+/* ================= CONFIGURACIÓN ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyDrivDNeM2xa8y5ixZHvYRw8tpoHuyQty8",
+  authDomain: "pasaporte-evento.firebaseapp.com",
+  projectId: "pasaporte-evento",
+  storageBucket: "pasaporte-evento.firebasestorage.app",
+  messagingSenderId: "827723147076",
+  appId: "1:827723147076:web:2edd3465393ec53fd51911"
+};
 
-    <script>
-        const empresas = [
-            'abb', 'aspentech', 'dow', 'emerson', 'engie', 
-            'goodway', 'halliburton', 'linde', 'pemex', 'woodside', 'orbia'
-        ];
+// true = solo permite correos @gmail.com
+const SOLO_GMAIL = false;
 
-        const parametrosURL = new URLSearchParams(window.location.search);
-        const selloEscaneado = parametrosURL.get('sello');
+// Catálogo de stands: id (el que va en el QR) → nombre visible y archivo del logo.
+// Los archivos van en la carpeta img/. Si falta alguno, se muestra el nombre en texto.
+const STANDS = {
+  linde:       { nombre: "Linde",       img: "img/linde.png" },
+  koehler:     { nombre: "Koehler",     img: "img/koehler.png" },
+  abb:         { nombre: "ABB",         img: "img/abb.png" },
+  emerson:     { nombre: "Emerson",     img: "img/emerson.png" },
+  sica:        { nombre: "SICA",        img: "img/sica.png" },
+  g2h:         { nombre: "G2H",         img: "img/g2h.png" },
+  spe:         { nombre: "SPE",         img: "img/spe.png" },
+  secovam:     { nombre: "Secovam",     img: "img/secovam.png" },
+  adriannava:  { nombre: "Adrian Nava", img: "img/adriannava.png" },
+  probecarios: { nombre: "Probecarios", img: "img/probecarios.png" },
+  dow:         { nombre: "Dow",         img: "img/dow.png" },
+  cryoinfra:   { nombre: "Cryoinfra",   img: "img/cryoinfra.png" },
+  goodway:     { nombre: "GoodWay",     img: "img/Goodway.png" },
+  ampp:        { nombre: "AMPP",        img: "img/ampp.png" },
+  clayton:     { nombre: "Clayton",     img: "img/clayton.png" },
+  arkema:      { nombre: "Arkema",      img: "img/arkema.png" },
+  lukoil:      { nombre: "Lukoil",      img: "img/lukoil.png" }
+};
 
-        // 1. Guardar sello en LocalStorage si existe en la URL
-        if (selloEscaneado && empresas.includes(selloEscaneado)) {
-            localStorage.setItem(selloEscaneado, 'visitado');
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
+// Stands por día (según tu hoja de cálculo)
+const DIAS = {
+  lunes:     { etiqueta: "Lunes",     stands: ["linde","koehler","abb","emerson","sica","g2h","spe","secovam","adriannava","probecarios"] },
+  martes:    { etiqueta: "Martes",    stands: ["linde","koehler","dow","emerson","cryoinfra","g2h","sica","secovam","adriannava","probecarios"] },
+  miercoles: { etiqueta: "Miércoles", stands: ["cryoinfra","koehler","dow","emerson","goodway","g2h","sica","secovam","adriannava"] },
+  jueves:    { etiqueta: "Jueves",    stands: ["ampp","spe","clayton","arkema","lukoil","g2h","sica","secovam","adriannava"] }
+};
+/* ================================================== */
 
-        // 2. Revisar cuántos stands están visitados
-        let sellosCompletados = 0;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
 
-        empresas.forEach(empresa => {
-            const estadoSello = localStorage.getItem(empresa);
-            if (estadoSello === 'visitado') {
-                const elemento = document.getElementById(`stand-${empresa}`);
-                if (elemento) {
-                    elemento.classList.remove('bloqueado');
-                    elemento.classList.add('desbloqueado');
-                    sellosCompletados++;
-                }
-            }
-        });
+const $ = id => document.getElementById(id);
+let uid = null;
+let sellos = {};          // { lunes: { linde: true, ... }, ... }
+let diaActual = null;
 
-        // 3. Activar celebración digital y mostrar mensaje de premio
-        if (sellosCompletados === empresas.length) {
-            document.getElementById('mensaje-premio').style.display = 'block';
-            
-            // Disparar animación de confeti
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+/* ---------- Día por defecto: el de hoy si es del evento, si no lunes ---------- */
+function diaDeHoy() {
+  const nombres = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
+  const hoy = nombres[new Date().getDay()];
+  return DIAS[hoy] ? hoy : "lunes";
+}
 
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
+/* ---------- Login / logout ---------- */
+$("btn-login").addEventListener("click", async () => {
+  $("error").textContent = "";
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") {
+      signInWithRedirect(auth, provider);
+    } else if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+      $("error").textContent = "No se pudo iniciar sesión. Abre esta página en Chrome o Safari e inténtalo de nuevo.";
+      console.error(e);
+    }
+  }
+});
+$("btn-salir").addEventListener("click", () => signOut(auth));
 
-        // 4. Función para resetear los datos del navegador
-        function reiniciarPasaporte() {
-            if(confirm("¿Seguro que quieres borrar todos los sellos?")) {
-                localStorage.clear();
-                window.location.href = window.location.pathname;
-            }
-        }
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasaporte del Evento</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        h1 { color: #333; font-size: 1.8rem; }
-        p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        /* Pantalla de Login */
-        #login-container {
-            margin-top: 50px;
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: inline-block;
-        }
-        .btn-google {
-            background-color: #4285F4;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+onAuthStateChanged(auth, async user => {
+  if (user && SOLO_GMAIL && !user.email.toLowerCase().endsWith("@gmail.com")) {
+    await signOut(auth);
+    $("error").textContent = "Usa una cuenta de Gmail para participar.";
+    return;
+  }
+  if (user) {
+    uid = user.uid;
+    $("login").style.display = "none";
+    $("usuario").style.display = "flex";
+    $("pasaporte").style.display = "block";
+    $("correo").textContent = user.email;
 
-        /* Perfil de Usuario */
-        #user-info {
-            display: none;
-            background-color: #e3f2fd;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-        .btn-logout {
-            background-color: #ff4c4c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 10px;
-        }
+    const escaneo = leerQR();
+    diaActual = escaneo ? escaneo.dia : (diaActual || diaDeHoy());
+    await cargarSellos();
+    if (escaneo) await registrarSello(escaneo.dia, escaneo.sello);
+    pintarDias();
+    pintarDia();
+  } else {
+    uid = null; sellos = {};
+    $("login").style.display = "block";
+    $("usuario").style.display = "none";
+    $("pasaporte").style.display = "none";
+  }
+});
 
-        /* Cuadrícula del pasaporte (oculta hasta iniciar sesión) */
-        #pasaporte-container {
-            display: none;
-        }
-        .grid-pasaporte {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 20px;
-        }
-        .sello {
-            background-color: white;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 80px; 
-            transition: all 0.3s ease;
-        }
-        .sello img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; 
-            transition: all 0.4s ease;
-        }
-        .bloqueado {
-            border: 2px dashed #d1d1d1;
-            background-color: #fafafa;
-        }
-        .bloqueado img {
-            filter: grayscale(100%) opacity(20%);
-        }
-        .desbloqueado {
-            border: 2px solid #4CAF50;
-            background-color: #ffffff;
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
-        }
-        .desbloqueado img {
-            filter: grayscale(0%) opacity(100%);
-        }
+/* ---------- QR: ?dia=lunes&sello=linde ---------- */
+function leerQR() {
+  const p = new URLSearchParams(window.location.search);
+  const sello = (p.get("sello") || "").toLowerCase();
+  let dia = (p.get("dia") || "").toLowerCase();
+  if (!sello) return null;
+  if (!dia) dia = diaDeHoy();               // si el QR no trae día, usa el de hoy
+  return { dia, sello };
+}
 
-        /* Cartel de premio */
-        #mensaje-premio {
-            display: none; 
-            margin-top: 30px; 
-            padding: 20px; 
-            background-color: #4CAF50; 
-            color: white; 
-            border-radius: 12px; 
-            animation: popIn 0.5s ease;
-        }
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    </style>
-</head>
-<body>
+async function registrarSello(dia, sello) {
+  const valido = DIAS[dia] && DIAS[dia].stands.includes(sello);
+  window.history.replaceState({}, document.title, window.location.pathname);
+  if (!valido) { aviso("Este QR no corresponde a un stand de ese día."); return; }
+  if (sellos[dia]?.[sello]) { aviso(`Ya tenías el sello de ${STANDS[sello].nombre}.`); return; }
+  try {
+    await setDoc(doc(db, "usuarios", uid), {
+      email: auth.currentUser.email,
+      nombre: auth.currentUser.displayName || "",
+      sellos: { [dia]: { [sello]: true } }
+    }, { merge: true });
+    sellos[dia] = { ...(sellos[dia] || {}), [sello]: true };
+    aviso(`¡Sello de ${STANDS[sello].nombre} conseguido!`);
+  } catch (e) {
+    console.error(e);
+    aviso("No se pudo guardar el sello. Revisa tu conexión e inténtalo otra vez.");
+  }
+}
 
-    <h1>Pasaporte Interactivo</h1>
+async function cargarSellos() {
+  try {
+    const snap = await getDoc(doc(db, "usuarios", uid));
+    sellos = snap.exists() ? (snap.data().sellos || {}) : {};
+  } catch (e) { console.error(e); sellos = {}; }
+}
 
-    <!-- Pantalla de Login -->
-    <div id="login-container">
-        <p>Inicia sesión con tu cuenta de Google para comenzar a coleccionar tus sellos.</p>
-        <button id="btn-login" class="btn-google">Iniciar sesión con Google</button>
-    </div>
+/* ---------- Interfaz ---------- */
+function conteoDia(dia) {
+  const lista = DIAS[dia].stands;
+  return { hechos: lista.filter(s => sellos[dia]?.[s]).length, total: lista.length };
+}
 
-    <!-- Información del Usuario -->
-    <div id="user-info">
-        Conectado como: <span id="user-email" style="font-weight: bold;"></span>
-        <button id="btn-logout" class="btn-logout">Cerrar sesión</button>
-    </div>
+function pintarDias() {
+  const cont = $("dias");
+  cont.innerHTML = "";
+  Object.entries(DIAS).forEach(([clave, d]) => {
+    const { hechos, total } = conteoDia(clave);
+    const b = document.createElement("button");
+    b.className = "dia" + (hechos === total ? " completo" : "");
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", clave === diaActual);
+    b.innerHTML = `${d.etiqueta}<small>${hechos}/${total}</small>`;
+    b.addEventListener("click", () => { diaActual = clave; pintarDias(); pintarDia(false); });
+    cont.appendChild(b);
+  });
+}
 
-    <!-- Contenedor Principal del Pasaporte -->
-    <div id="pasaporte-container">
-        <p>Escanea el QR en cada stand para activar su logo.</p>
-        <div class="grid-pasaporte">
-            <div id="stand-abb" class="sello bloqueado"><img src="img/abb.png" alt="ABB"></div>
-            <div id="stand-aspentech" class="sello bloqueado"><img src="img/aspentech.png" alt="AspenTech"></div>
-            <div id="stand-dow" class="sello bloqueado"><img src="img/dow.png" alt="Dow"></div>
-            <div id="stand-emerson" class="sello bloqueado"><img src="img/emerson.png" alt="Emerson"></div>
-            <div id="stand-engie" class="sello bloqueado"><img src="img/engie.png" alt="Engie"></div>
-            <div id="stand-goodway" class="sello bloqueado"><img src="img/Goodway.png" alt="Goodway"></div>
-            <div id="stand-halliburton" class="sello bloqueado"><img src="img/Halliburton.png" alt="Halliburton"></div>
-            <div id="stand-linde" class="sello bloqueado"><img src="img/linde.png" alt="Linde"></div>
-            <div id="stand-pemex" class="sello bloqueado"><img src="img/pemex.png" alt="Pemex"></div>
-            <div id="stand-woodside" class="sello bloqueado"><img src="img/woodside.png" alt="Woodside"></div>
-            <div id="stand-orbia" class="sello bloqueado"><img src="img/orbia.png" alt="Orbia"></div>
-        </div>
+function pintarDia(celebrar = true) {
+  const d = DIAS[diaActual];
+  const { hechos, total } = conteoDia(diaActual);
+  const grid = $("grid");
+  grid.innerHTML = "";
 
-        <div id="mensaje-premio">
-            <h2>¡Pasaporte Lleno! 🎉</h2>
-            <p style="color: white; font-size: 1.2rem; font-weight: bold;">Pasa por tu premio</p>
-        </div>
-    </div>
+  d.stands.forEach(id => {
+    const s = STANDS[id];
+    const el = document.createElement("div");
+    el.className = "sello " + (sellos[diaActual]?.[id] ? "desbloqueado" : "bloqueado");
+    const img = document.createElement("img");
+    img.src = s.img; img.alt = s.nombre;
+    img.onerror = () => {                      // sin logo: muestra el nombre
+      img.remove();
+      const t = document.createElement("span");
+      t.className = "nombre"; t.textContent = s.nombre;
+      el.appendChild(t);
+    };
+    el.appendChild(img);
+    grid.appendChild(el);
+  });
 
-    <!-- Script principal como Módulo para importar Firebase directamente -->
-    <script type="module">
-        // Importar funciones de Firebase desde el CDN
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-firestore.js";
+  $("progreso-texto").textContent = `Sellos del ${d.etiqueta.toLowerCase()}`;
+  $("progreso-dia").textContent = `${hechos} de ${total}`;
+  $("barra-llenado").style.width = (hechos / total * 100) + "%";
 
-        // Tu configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDrivDNeM2xa8y5ixZHvYRw8tpoHuyQty8",
-            authDomain: "pasaporte-evento.firebaseapp.com",
-            projectId: "pasaporte-evento",
-            storageBucket: "pasaporte-evento.firebasestorage.app",
-            messagingSenderId: "827723147076",
-            appId: "1:827723147076:web:2edd3465393ec53fd51911"
-        };
+  const completo = hechos === total;
+  $("premio").style.display = completo ? "block" : "none";
+  if (completo && celebrar) confeti();
+}
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+function confeti() {
+  const fin = Date.now() + 3000;
+  const base = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+  const t = setInterval(() => {
+    const resta = fin - Date.now();
+    if (resta <= 0) return clearInterval(t);
+    confetti({ ...base, particleCount: 50 * (resta / 3000), origin: { x: Math.random(), y: Math.random() - 0.2 } });
+  }, 250);
+}
 
-        const empresas = [
-            'abb', 'aspentech', 'dow', 'emerson', 'engie', 
-            'goodway', 'halliburton', 'linde', 'pemex', 'woodside', 'orbia'
-        ];
-
-        // Elementos de la interfaz
-        const loginContainer = document.getElementById('login-container');
-        const userInfo = document.getElementById('user-info');
-        const pasaporteContainer = document.getElementById('pasaporte-container');
-        const userEmailSpan = document.getElementById('user-email');
-        const btnLogin = document.getElementById('btn-login');
-        const btnLogout = document.getElementById('btn-logout');
-
-        // Eventos de botones
-        btnLogin.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch(error => console.error("Error al iniciar sesión:", error));
-        });
-
-        btnLogout.addEventListener('click', () => {
-            signOut(auth);
-        });
-
-        // Detectar si el usuario inicia o cierra sesión
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Usuario conectado
-                loginContainer.style.display = 'none';
-                userInfo.style.display = 'block';
-                pasaporteContainer.style.display = 'block';
-                userEmailSpan.textContent = user.email;
-
-                await procesarEscaneoQR(user.uid);
-                await cargarSellos(user.uid);
-            } else {
-                // Usuario desconectado
-                loginContainer.style.display = 'inline-block';
-                userInfo.style.display = 'none';
-                pasaporteContainer.style.display = 'none';
-            }
-        });
-
-        // 1. Guardar sello en Base de Datos si hay parámetro en la URL
-        async function procesarEscaneoQR(userId) {
-            const parametrosURL = new URLSearchParams(window.location.search);
-            const selloEscaneado = parametrosURL.get('sello');
-
-            if (selloEscaneado && empresas.includes(selloEscaneado)) {
-                const userRef = doc(db, "usuarios", userId);
-                try {
-                    // Guardar o actualizar el sello en Firestore
-                    await setDoc(userRef, {
-                        [selloEscaneado]: true
-                    }, { merge: true });
-                    
-                    // Limpiar URL sin recargar
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                } catch (error) {
-                    console.error("Error guardando sello: ", error);
-                }
-            }
-        }
-
-        // 2. Leer sellos de la Base de Datos y actualizar interfaz
-        async function cargarSellos(userId) {
-            const userRef = doc(db, "usuarios", userId);
-            const docSnap = await getDoc(userRef);
-            let sellosCompletados = 0;
-
-            if (docSnap.exists()) {
-                const datosUsuario = docSnap.data();
-
-                empresas.forEach(empresa => {
-                    if (datosUsuario[empresa] === true) {
-                        const elemento = document.getElementById(`stand-${empresa}`);
-                        if (elemento) {
-                            elemento.classList.remove('bloqueado');
-                            elemento.classList.add('desbloqueado');
-                            sellosCompletados++;
-                        }
-                    }
-                });
-
-                // Activar celebración si tiene los 11
-                if (sellosCompletados === empresas.length) {
-                    document.getElementById('mensaje-premio').style.display = 'block';
-                    dispararConfeti();
-                }
-            }
-        }
-
-        function dispararConfeti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-    </script>
+let temporizador;
+function aviso(msg) {
+  const t = $("toast");
+  t.textContent = msg; t.classList.add("visible");
+  clearTimeout(temporizador);
+  temporizador = setTimeout(() => t.classList.remove("visible"), 3500);
+}
+</script>
 </body>
 </html>
