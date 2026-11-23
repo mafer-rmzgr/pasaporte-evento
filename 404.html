@@ -4,16 +4,15 @@
   <meta charset="UTF-8">
   <title>Redirigiendo al Pasaporte...</title>
   <script>
-    const path = window.location.pathname;
-    const cleanPath = path.replace(/^\/pasaporte-evento\/?/, '').replace(/\/$/, '');
+    const cleanPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
     const parts = cleanPath.split('/');
 
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && parts[0] && parts[1]) {
       const dia = parts[0].toLowerCase();
       const sello = parts[1].toLowerCase();
-      window.location.replace(`/pasaporte-evento/?dia=${encodeURIComponent(dia)}&sello=${encodeURIComponent(sello)}`);
+      window.location.replace(`/?dia=${encodeURIComponent(dia)}&sello=${encodeURIComponent(sello)}`);
     } else {
-      window.location.replace('/pasaporte-evento/');
+      window.location.replace('/');
     }
   </script>
 </head>
