@@ -4,21 +4,16 @@
   <meta charset="UTF-8">
   <title>Redirigiendo al Pasaporte...</title>
   <script>
-    // Obtiene la ruta escaneada, por ejemplo: /pasaporte-evento/lunes/linde
     const path = window.location.pathname;
-    
-    // Limpia la ruta base del repositorio
     const cleanPath = path.replace(/^\/pasaporte-evento\/?/, '').replace(/\/$/, '');
     const parts = cleanPath.split('/');
 
-    // Si la ruta tiene día y empresa (ej. ["lunes", "linde"])
     if (parts.length >= 2) {
       const dia = parts[0].toLowerCase();
-      const empresa = parts[1].toLowerCase();
-      // Redirige a index.html pasando los datos como parámetros de consulta
-      window.location.replace(`/pasaporte-evento/?dia=${encodeURIComponent(dia)}&empresa=${encodeURIComponent(empresa)}`);
+      const sello = parts[1].toLowerCase();
+      // Aquí cambiamos "empresa" por "sello" para que coincida con tu index.html
+      window.location.replace(`/pasaporte-evento/?dia=${encodeURIComponent(dia)}&sello=${encodeURIComponent(sello)}`);
     } else {
-      // Si es cualquier otra ruta inválida, manda al inicio del pasaporte
       window.location.replace('/pasaporte-evento/');
     }
   </script>
@@ -26,4 +21,4 @@
 <body>
   <p>Cargando sello del pasaporte...</p>
 </body>
-</html>40
+</html>
