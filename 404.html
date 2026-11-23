@@ -11,7 +11,6 @@
     if (parts.length >= 2) {
       const dia = parts[0].toLowerCase();
       const sello = parts[1].toLowerCase();
-      // Aquí cambiamos "empresa" por "sello" para que coincida con tu index.html
       window.location.replace(`/pasaporte-evento/?dia=${encodeURIComponent(dia)}&sello=${encodeURIComponent(sello)}`);
     } else {
       window.location.replace('/pasaporte-evento/');
