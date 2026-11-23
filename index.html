@@ -28,7 +28,7 @@
     --cuerpo: 'Barlow', 'Segoe UI', Tahoma, sans-serif;
     --manuscrita: 'Caveat', 'Segoe Script', cursive;
   }
-- { box-sizing: border-box; }
+  * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; min-height: 100vh; color: #fff; font-family: var(--cuerpo);
@@ -300,9 +300,8 @@ const firebaseConfig = {
   messagingSenderId: "827723147076",
   appId: "1:827723147076:web:2edd3465393ec53fd51911"
 };
-const SOLO_GMAIL = false;   // true = solo correos @gmail.com
+const SOLO_GMAIL = false;
 
-// id = lo que va en el QR (?sello=...). Los logos van en la carpeta img/.
 const STANDS = {
   linde:       { nombre: "Linde",       img: "img/linde.png" },
   koehler:     { nombre: "Koehler",     img: "img/koehler.png" },
@@ -338,15 +337,15 @@ const DIAS = {
 const TINTAS = ["#C0392B", "#2F5DA8", "#2E8B57", "#7A3E9D", "#D2691E", "#127C8C"];
 const FORMAS = [
   { d: "M14 12 H86 A8 8 0 0 1 94 20 V80 A8 8 0 0 1 86 88 H14 A8 8 0 0 1 6 80 V20 A8 8 0 0 1 14 12 Z",
-    logo: [20, 28, 60, 34], top: 24, nombre: 78, ancho: 70 },                       // rectángulo
+    logo: [20, 28, 60, 34], top: 24, nombre: 78, ancho: 70 },
   { d: "M50 5 A45 45 0 1 1 49.99 5 Z",
-    logo: [28, 30, 44, 28], top: 22, nombre: 76, ancho: 48 },                       // círculo
+    logo: [28, 30, 44, 28], top: 22, nombre: 76, ancho: 48 },
   { d: "M50 5 L91 27.5 L91 72.5 L50 95 L9 72.5 L9 27.5 Z",
-    logo: [26, 30, 48, 32], top: 23, nombre: 78, ancho: 54 },                       // hexágono
+    logo: [26, 30, 48, 32], top: 23, nombre: 78, ancho: 54 },
   { d: "M10 8 H90 V56 Q90 82 50 95 Q10 82 10 56 Z",
-    logo: [26, 28, 48, 32], top: 21, nombre: 74, ancho: 54 },                       // escudo
+    logo: [26, 28, 48, 32], top: 21, nombre: 74, ancho: 54 },
   { d: "M12 94 V46 A38 38 0 0 1 88 46 V94 Z",
-    logo: [28, 34, 44, 30], top: null, nombre: 82, ancho: 56 }                      // arco
+    logo: [28, 34, 44, 30], top: null, nombre: 82, ancho: 56 }
 ];
 let contSvg = 0;
 function hash(t) { let h = 0; for (const c of t) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
@@ -412,7 +411,7 @@ $("btn-login").addEventListener("click", async () => {
   }
 });
 $("btn-copiar").addEventListener("click", async () => {
-  const url = window.location.origin + window.location.pathname;
+  const url = window.location.href;
   try { await navigator.clipboard.writeText(url); aviso("Enlace copiado. Pégalo en Safari o Chrome."); }
   catch { prompt("Copia este enlace y ábrelo en Safari o Chrome:", url); }
 });
@@ -437,7 +436,7 @@ onAuthStateChanged(auth, async user => {
   await cargarSellos();
   const nuevo = qr ? await registrarSello(qr.dia, qr.sello) : null;
 
-  if (qr) {                       // viene de escanear un QR: directo al libro
+  if (qr) {
     vista("libro"); pintarDias(); pintarDia(!nuevo);
     if (nuevo) mostrarOverlay(nuevo);
   } else {
